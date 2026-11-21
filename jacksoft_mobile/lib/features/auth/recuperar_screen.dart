@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import 'login_screen.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/features/auth/login_screen.dart';
 
-/// Recuperar contraseña en 3 pasos: correo → código de 6 dígitos → nueva contraseña.
+/// Recuperar contraseña en 3 pasos: correo → código de 6 dígitos → nueva
+/// contraseña.
 class RecuperarScreen extends StatefulWidget {
   const RecuperarScreen({super.key});
 
@@ -43,7 +44,8 @@ class _RecuperarScreenState extends State<RecuperarScreen> {
       ),
       2 => (
         'Verifica tu código',
-        'Te enviamos un código de 6 dígitos. Vence en 10 minutos y tienes 5 intentos.',
+        'Te enviamos un código de 6 dígitos. Vence en 10 minutos y tienes 5 '
+            'intentos.',
       ),
       _ => ('Nueva contraseña', 'Usa al menos 8 caracteres.'),
     };
@@ -67,7 +69,7 @@ class _RecuperarScreenState extends State<RecuperarScreen> {
                       : null,
                 ),
               if (_paso == 2) ...[
-                CodigoField(label: 'Código de verificación'),
+                const CodigoField(label: 'Código de verificación'),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
@@ -137,7 +139,7 @@ class _Pasos extends StatelessWidget {
 
 /// Campo para el código de 6 dígitos (estilo de comanda, monoespaciado).
 class CodigoField extends StatelessWidget {
-  const CodigoField({super.key, required this.label, this.controller});
+  const CodigoField({required this.label, super.key, this.controller});
   final String label;
   final TextEditingController? controller;
 

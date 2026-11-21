@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'core/theme.dart';
-import 'data/app_state.dart';
-import 'data/models.dart';
-import 'features/auth/login_screen.dart';
-import 'features/cliente/cliente_shell.dart';
-import 'features/domiciliario/domiciliario_shell.dart';
-import 'features/splash_screen.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/auth/login_screen.dart';
+import 'package:jacksoft_mobile/features/cliente/cliente_shell.dart';
+import 'package:jacksoft_mobile/features/domiciliario/domiciliario_shell.dart';
+import 'package:jacksoft_mobile/features/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ void main() {
 }
 
 class JackSoftApp extends StatelessWidget {
-  const JackSoftApp({super.key, required this.state});
+  const JackSoftApp({required this.state, super.key});
   final AppState state;
 
   @override
@@ -49,7 +49,7 @@ class _RootState extends State<_Root> {
   @override
   Widget build(BuildContext context) {
     final st = AppScope.of(context);
-    final Widget child = _splash
+    final child = _splash
         ? SplashScreen(onDone: () => setState(() => _splash = false))
         : switch (st.rol) {
             null => const LoginScreen(),

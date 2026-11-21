@@ -54,7 +54,8 @@ abstract final class JkSpace {
   static const double field = 48;
 }
 
-/// Baloo 2 para titulares, Work Sans para leer, monoespaciada solo para la comanda.
+/// Baloo 2 para titulares, Work Sans para leer, monoespaciada solo para la
+/// comanda.
 abstract final class JkText {
   /// En las pruebas se apaga para no descargar fuentes.
   static bool googleFonts = true;

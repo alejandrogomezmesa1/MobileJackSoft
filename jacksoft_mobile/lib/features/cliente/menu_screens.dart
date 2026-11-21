@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
 
-/// HU06.3_08: menú publicado de la semana (con la versión del seco según la proteína
+/// HU06.3_08: menú publicado de la semana (con la versión del seco según la
+/// proteína
 /// y la alternativa según las alergias del cliente).
 class MenuSemanaScreen extends StatelessWidget {
   const MenuSemanaScreen({super.key});
@@ -20,21 +21,26 @@ class MenuSemanaScreen extends StatelessWidget {
       title: 'Menú de la semana',
       subtitle: '${fechaCorta(semana.first)} – ${fechaCorta(semana.last)}',
       children: [
-        if (st.cliente.preferencia != PreferenciaProteina.normal ||
-            st.cliente.alergias.isNotEmpty)
-          Notice(
-            [
-              if (st.cliente.preferencia != PreferenciaProteina.normal)
-                'Ves el seco en versión ${st.cliente.preferencia.label.toLowerCase()}.',
-              if (st.cliente.alergias.isNotEmpty)
-                'Por tus alergias (${st.cliente.alergias.map((a) => a.label.toLowerCase()).join(', ')}), te mostramos el plato que la cocina te cambia.',
-            ].join(' '),
-            icon: Icons.tune,
-          ),
+        if (_avisoPersonal(st) case final aviso?)
+          Notice(aviso, icon: Icons.tune),
         for (final d in semana) _DiaMenu(st, d),
       ],
     );
   }
+}
+
+String _minuscula(Alergeno a) => a.label.toLowerCase();
+
+String? _avisoPersonal(AppState st) {
+  final c = st.cliente;
+  final alergias = c.alergias.map(_minuscula).join(', ');
+  final partes = <String>[
+    if (c.preferencia != PreferenciaProteina.normal)
+      'Ves el seco en versión ${c.preferencia.label.toLowerCase()}.',
+    if (c.alergias.isNotEmpty)
+      'Por tus alergias ($alergias), ves el plato que te cambia la cocina.',
+  ];
+  return partes.isEmpty ? null : partes.join(' ');
 }
 
 class _DiaMenu extends StatelessWidget {
@@ -116,7 +122,10 @@ class _DiaMenu extends StatelessWidget {
                   ),
                   if (alt != null) ...[
                     const SizedBox(height: 6),
-                    StatusBadge('Cambiado por tu alergia', tone: Tone.warn),
+                    const StatusBadge(
+                      'Cambiado por tu alergia',
+                      tone: Tone.warn,
+                    ),
                   ],
                   if (st.pausas.contains(d)) ...[
                     const SizedBox(height: 6),
@@ -188,13 +197,15 @@ class MenuDiaScreen extends StatelessWidget {
           ),
         if (alt != null)
           Notice(
-            'El seco del menú es "${m.seco}". Por tu alergia la cocina te manda "$alt".',
+            'El seco del menú es "${m.seco}". Por tu alergia la cocina te '
+            'manda "$alt".',
             icon: Icons.health_and_safety_outlined,
             tone: Tone.warn,
           ),
         if (st.cliente.preferencia != PreferenciaProteina.normal && alt == null)
           Notice(
-            'Tienes "${st.cliente.preferencia.label}": el seco del menú es "${m.seco}".',
+            'Tienes "${st.cliente.preferencia.label}": el seco del menú es '
+            '"${m.seco}".',
             icon: Icons.tune,
           ),
       ],

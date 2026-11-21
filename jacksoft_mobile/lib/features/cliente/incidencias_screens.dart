@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
 
-/// HU07.3_07 (reportar con foto) y HU07.3_08 (ver la respuesta del administrador).
+/// HU07.3_07 (reportar con foto) y HU07.3_08 (ver la respuesta del
+/// administrador).
 class IncidenciasTab extends StatefulWidget {
   const IncidenciasTab({super.key});
 
@@ -34,7 +35,11 @@ class _IncidenciasTabState extends State<IncidenciasTab> {
     if (!_form.currentState!.validate() || _tipo == null) return;
     AppScope.read(
       context,
-    ).reportarIncidencia(_tipo!, _desc.text.trim(), _foto != null);
+    ).reportarIncidencia(
+      _tipo!,
+      _desc.text.trim(),
+      foto: _foto != null,
+    );
     setState(() {
       _tipo = null;
       _desc.clear();
@@ -170,7 +175,8 @@ class IncidenciaDetalle extends StatelessWidget {
       if (inc.respuesta == null)
         Notice(
           inc.estado == EstadoIncidencia.enRevision
-              ? 'Estamos revisando tu caso. Te avisamos con una notificación cuando respondamos.'
+              ? 'Estamos revisando tu caso. Te avisamos con una '
+                    'notificación cuando respondamos.'
               : 'Recibimos tu reporte. Pronto lo revisamos.',
           icon: Icons.hourglass_top,
           tone: Tone.warn,
@@ -185,7 +191,8 @@ class IncidenciaDetalle extends StatelessWidget {
               if (inc.fechaResolucion != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Resuelta el ${fechaMedia(inc.fechaResolucion!)}, ${hora(inc.fechaResolucion!)}',
+                  'Resuelta el ${fechaMedia(inc.fechaResolucion!)}, '
+                  '${hora(inc.fechaResolucion!)}',
                   style: JkText.body(13, c: JkColors.inkMuted),
                 ),
               ],

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
 
 /// HU06.2_14: pausar (suspender) la entrega de un día.
-/// Regla: hasta las 5:00 p. m. del día anterior; el día no se devuelve ni mueve el vencimiento.
+/// Regla: hasta las 5:00 p. m. del día anterior; el día no se devuelve ni mueve
+/// el vencimiento.
 class SuspenderScreen extends StatelessWidget {
   const SuspenderScreen({super.key});
 
@@ -18,7 +19,9 @@ class SuspenderScreen extends StatelessWidget {
       title: pausado ? '¿Quitar la pausa?' : '¿Pausar el ${fechaLarga(d)}?',
       message: pausado
           ? 'Te llevamos el almuerzo ese día como siempre.'
-          : 'Ese día no te llevamos almuerzo. El día pausado no se devuelve y tu plan sigue venciendo el ${fechaLarga(st.suscripcion.fechaVencimiento)}.',
+          : 'Ese día no te llevamos almuerzo. El día pausado no se devuelve '
+                'y tu plan sigue venciendo el '
+                '${fechaLarga(st.suscripcion.fechaVencimiento)}.',
       confirmLabel: pausado ? 'Quitar pausa' : 'Pausar este día',
     );
     if (!ok || !context.mounted) return;
@@ -84,8 +87,9 @@ class SuspenderScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        Notice(
-          'Puedes pausar hasta las 5:00 p. m. del día anterior. El día pausado no se devuelve y no mueve la fecha de vencimiento.',
+        const Notice(
+          'Puedes pausar hasta las 5:00 p. m. del día anterior. El día '
+          'pausado no se devuelve y no mueve la fecha de vencimiento.',
           icon: Icons.schedule,
           tone: Tone.warn,
         ),
@@ -99,7 +103,8 @@ class SuspenderScreen extends StatelessWidget {
                   JkListItem(
                     title: capitalizar(fechaLarga(d)),
                     subtitle: st.puedePausar(d)
-                        ? 'Puedes quitarla hasta ${hora(st.limitePausa(d))} del ${fechaCorta(st.limitePausa(d))}'
+                        ? 'Puedes quitarla hasta ${hora(st.limitePausa(d))} '
+                              'del ${fechaCorta(st.limitePausa(d))}'
                         : 'Ya no se puede cambiar',
                     trailing: StatusBadge.auto('Pausado'),
                     last: i == st.pausas.length - 1,
@@ -137,8 +142,11 @@ class _Celda extends StatelessWidget {
       child: Semantics(
         button: activo,
         selected: pausado,
-        label:
-            '${fechaLarga(d)}${pausado ? ', pausado' : ''}${st.esFestivo(d) ? ', festivo' : ''}',
+        label: [
+          fechaLarga(d),
+          if (pausado) 'pausado',
+          if (st.esFestivo(d)) 'festivo',
+        ].join(', '),
         child: InkWell(
           onTap: activo ? onTap : null,
           borderRadius: JkRadius.br,

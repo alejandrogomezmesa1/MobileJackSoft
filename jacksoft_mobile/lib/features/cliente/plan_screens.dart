@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
 
 /// HU06.2_13: estado de la suscripción, contador en vivo e historial de pagos.
 class PlanTab extends StatelessWidget {
@@ -26,7 +25,8 @@ class PlanTab extends StatelessWidget {
                 Text('Aún no tienes plan', style: JkText.display(24)),
                 const SizedBox(height: 4),
                 Text(
-                  'Semanal, quincenal o mensual. Pagas por transferencia a Bancolombia y subes el comprobante aquí.',
+                  'Semanal, quincenal o mensual. Pagas por transferencia a '
+                  'Bancolombia y subes el comprobante aquí.',
                   style: JkText.body(15, c: JkColors.inkSoft),
                 ),
                 const SizedBox(height: 14),
@@ -84,7 +84,8 @@ class PlanTab extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'almuerzos por recibir\nhasta el ${fechaLarga(s.fechaVencimiento)}',
+                        'almuerzos por recibir\nhasta el '
+                        '${fechaLarga(s.fechaVencimiento)}',
                         style: JkText.body(14, c: JkColors.inkSoft),
                       ),
                     ),
@@ -109,7 +110,8 @@ class PlanTab extends StatelessWidget {
               if (s.descuentoFestivos > 0)
                 InfoRow(
                   'Festivos descontados',
-                  '${st.festivosDel(s).map(fechaCorta).join(', ')} · ${cop(s.descuentoFestivos)}',
+                  '${st.festivosDel(s).map(fechaCorta).join(', ')} · '
+                      '${cop(s.descuentoFestivos)}',
                 ),
               InfoRow('Proteína', s.preferencia.label),
               InfoRow('Valor pagado', cop(s.total), mono: true, last: true),
@@ -139,7 +141,8 @@ class PlanTab extends StatelessWidget {
                     leading: const IconTile(Icons.payments_outlined, size: 38),
                     title: p.concepto,
                     subtitle:
-                        '${fechaMedia(p.fecha)} · ${cop(p.valor)} · ${p.referencia}',
+                        '${fechaMedia(p.fecha)} · ${cop(p.valor)} · '
+                        '${p.referencia}',
                     monoSubtitle: true,
                     trailing: StatusBadge.auto(p.estado),
                     last: i == st.pagos.length - 1,
@@ -237,7 +240,8 @@ class _RenovacionScreenState extends State<RenovacionScreen> {
                 st.solicitarPlan(plan: _plan, preferencia: _pref);
                 showToast(
                   context,
-                  '¡Listo, ${st.cliente.primerNombre}! Estamos verificando tu pago.',
+                  '¡Listo, ${st.cliente.primerNombre}! Estamos verificando '
+                  'tu pago.',
                 );
                 Navigator.pop(context);
               },
@@ -267,7 +271,8 @@ class _RenovacionScreenState extends State<RenovacionScreen> {
         Notice(
           st.cliente.tieneKitCocas
               ? 'Ya tienes tu kit de cocas: no lo pagas de nuevo.'
-              : 'El kit de 2 juegos de cocas (${cop(AppState.cobroCocas)}) se paga una sola vez.',
+              : 'El kit de 2 juegos de cocas (${cop(AppState.cobroCocas)}) '
+                    'se paga una sola vez.',
           icon: Icons.inventory_2_outlined,
           tone: st.cliente.tieneKitCocas ? Tone.ok : Tone.neutral,
         ),
@@ -278,8 +283,8 @@ class _RenovacionScreenState extends State<RenovacionScreen> {
           child: Column(
             children: [
               // Datos de ejemplo: el administrador los configura en el panel.
-              _Copiable('Cuenta de ahorros', '000-000000-00'),
-              _Copiable('Titular', 'La Coca de Jacks S.A.S.'),
+              const _Copiable('Cuenta de ahorros', '000-000000-00'),
+              const _Copiable('Titular', 'La Coca de Jacks S.A.S.'),
               _Copiable('Referencia', ref, last: true),
             ],
           ),
@@ -302,7 +307,8 @@ class _RenovacionScreenState extends State<RenovacionScreen> {
               _Linea('Total', cop(total), bold: true),
               const SizedBox(height: 6),
               Text(
-                'Si hay festivos en tu ciclo, el descuento se aplica al validar el pago.',
+                'Si hay festivos en tu ciclo, el descuento se aplica al '
+                'validar el pago.',
                 style: JkText.body(12.5, c: JkColors.inkMuted),
               ),
             ],
@@ -316,7 +322,8 @@ class _RenovacionScreenState extends State<RenovacionScreen> {
           onChanged: (f) => setState(() => _comprobante = f),
         ),
         Text(
-          'Si envías antes del sábado a las 12:00 m., empiezas el lunes siguiente.',
+          'Si envías antes del sábado a las 12:00 m., empiezas el lunes '
+          'siguiente.',
           style: JkText.body(13, c: JkColors.inkMuted),
         ),
       ],
@@ -374,9 +381,11 @@ class _Copiable extends StatelessWidget {
         foregroundColor: JkColors.ink,
         minimumSize: const Size(0, JkSpace.touch),
       ),
-      onPressed: () {
-        Clipboard.setData(ClipboardData(text: v));
-        showToast(context, '$l copiado', icon: Icons.copy);
+      onPressed: () async {
+        await Clipboard.setData(ClipboardData(text: v));
+        if (context.mounted) {
+          showToast(context, '$l copiado', icon: Icons.copy);
+        }
       },
       icon: const Icon(Icons.copy, size: 17),
       label: const Text('Copiar'),

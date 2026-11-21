@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
-import '../data/app_state.dart';
-import 'theme.dart';
-import 'widgets.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
 
 // ============================================================ marca
 
-/// Marca: la olla del prototipo HTML dibujada en un recuadro plano (sin gradiente).
+/// Marca: la olla del prototipo HTML dibujada en un recuadro plano (sin
+/// gradiente).
 class BrandMark extends StatelessWidget {
   const BrandMark({super.key, this.size = 56, this.onDark = false});
   final double size;
@@ -41,16 +41,18 @@ class _PotPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
     Offset o(double x, double y) => Offset(x * k, y * k);
-    canvas.drawLine(o(12, 3), o(12, 5), p);
-    canvas.drawLine(o(8, 4.5), o(8, 6), p);
-    canvas.drawLine(o(16, 4.5), o(16, 6), p);
-    canvas.drawLine(o(4, 10), o(20, 10), p);
+    canvas
+      ..drawLine(o(12, 3), o(12, 5), p)
+      ..drawLine(o(8, 4.5), o(8, 6), p)
+      ..drawLine(o(16, 4.5), o(16, 6), p)
+      ..drawLine(o(4, 10), o(20, 10), p);
     final bowl = Path()
       ..moveTo(5 * k, 10 * k)
       ..cubicTo(5 * k, 14.5 * k, 8.1 * k, 18 * k, 12 * k, 18 * k)
       ..cubicTo(15.9 * k, 18 * k, 19 * k, 14.5 * k, 19 * k, 10 * k);
-    canvas.drawPath(bowl, p);
-    canvas.drawLine(o(7, 20), o(17, 20), p);
+    canvas
+      ..drawPath(bowl, p)
+      ..drawLine(o(7, 20), o(17, 20), p);
   }
 
   @override
@@ -61,8 +63,8 @@ class _PotPainter extends CustomPainter {
 
 class JkTopBar extends StatelessWidget implements PreferredSizeWidget {
   const JkTopBar({
-    super.key,
     required this.title,
+    super.key,
     this.subtitle,
     this.showBell = false,
   });
@@ -132,7 +134,7 @@ class JkTopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-void showNotificaciones(BuildContext context) {
+Future<void> showNotificaciones(BuildContext context) {
   final st = AppScope.read(context);
   IconData icono(String k) => switch (k) {
     'truck' => Icons.delivery_dining_outlined,
@@ -143,7 +145,7 @@ void showNotificaciones(BuildContext context) {
     'pause' => Icons.pause_circle_outline,
     _ => Icons.notifications_none,
   };
-  showJkSheet(
+  return showJkSheet<void>(
     context,
     builder: (ctx) => Column(
       mainAxisSize: MainAxisSize.min,
@@ -168,10 +170,10 @@ void showNotificaciones(BuildContext context) {
 /// Pantalla apilada (con volver), sin barra de pestañas.
 class JkPage extends StatelessWidget {
   const JkPage({
-    super.key,
     required this.title,
-    this.subtitle,
     required this.children,
+    super.key,
+    this.subtitle,
     this.bottom,
   });
   final String title;
@@ -206,8 +208,9 @@ class JkPage extends StatelessWidget {
   );
 }
 
-Future<T?> pushPage<T>(BuildContext context, Widget page) =>
-    Navigator.of(context).push<T>(MaterialPageRoute(builder: (_) => page));
+Future<void> pushPage(BuildContext context, Widget page) => Navigator.of(
+  context,
+).push<void>(MaterialPageRoute<void>(builder: (_) => page));
 
 // ============================================================ pestañas
 
@@ -231,7 +234,7 @@ class ShellTab {
 
 /// Marco con barra de pestañas abajo, al alcance del pulgar.
 class RoleShell extends StatefulWidget {
-  const RoleShell({super.key, required this.tabs});
+  const RoleShell({required this.tabs, super.key});
   final List<ShellTab> tabs;
 
   static RoleShellState of(BuildContext context) =>
@@ -316,7 +319,8 @@ class _BottomNav extends StatelessWidget {
                     onTap: () => onTap(i),
                     child: Column(
                       children: [
-                        // La línea de la pestaña activa crece en 200 ms (en carbón).
+                        // La línea de la pestaña activa crece en 200 ms (en
+                        // carbón).
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           height: 2,
@@ -355,7 +359,7 @@ class _BottomNav extends StatelessWidget {
 
 /// Contenido desplazable de una pestaña.
 class TabBody extends StatelessWidget {
-  const TabBody({super.key, required this.children});
+  const TabBody({required this.children, super.key});
   final List<Widget> children;
 
   @override

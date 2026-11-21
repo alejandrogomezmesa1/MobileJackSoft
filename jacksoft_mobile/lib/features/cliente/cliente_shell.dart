@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import 'entrega_screens.dart';
-import 'incidencias_screens.dart';
-import 'menu_screens.dart';
-import 'perfil_screen.dart';
-import 'plan_screens.dart';
-import 'suspender_screen.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/cliente/entrega_screens.dart';
+import 'package:jacksoft_mobile/features/cliente/incidencias_screens.dart';
+import 'package:jacksoft_mobile/features/cliente/menu_screens.dart';
+import 'package:jacksoft_mobile/features/cliente/perfil_screen.dart';
+import 'package:jacksoft_mobile/features/cliente/plan_screens.dart';
+import 'package:jacksoft_mobile/features/cliente/suspender_screen.dart';
 
 /// Pestañas del cliente: las cinco del prototipo HTML.
 class ClienteShell extends StatelessWidget {
@@ -54,7 +54,9 @@ class ClienteShell extends StatelessWidget {
   );
 }
 
-const tabPlan = 1, tabEntrega = 2, tabIncidencias = 3;
+const tabPlan = 1;
+const tabEntrega = 2;
+const tabIncidencias = 3;
 
 extension EntregaHoyX on AppState {
   bool get hayEntregaHoy =>
@@ -96,7 +98,8 @@ class ClienteInicio extends StatelessWidget {
                 Text('Elige tu plan', style: JkText.display(24)),
                 const SizedBox(height: 4),
                 Text(
-                  'Cotiza el plan, sube el comprobante y te avisamos por WhatsApp cuando quede activo.',
+                  'Cotiza el plan, sube el comprobante y te avisamos por '
+                  'WhatsApp cuando quede activo.',
                   style: JkText.body(15, c: JkColors.inkSoft),
                 ),
                 const SizedBox(height: 14),
@@ -109,19 +112,24 @@ class ClienteInicio extends StatelessWidget {
           )
         else if (sus.estado == EstadoSuscripcion.verificando)
           Notice(
-            'Estamos verificando tu pago del plan ${sus.plan.label.toLowerCase()}. Te avisamos por WhatsApp cuando quede activo.',
+            'Estamos verificando tu pago del plan '
+            '${sus.plan.label.toLowerCase()}. Te avisamos por WhatsApp '
+            'cuando quede activo.',
             tone: Tone.warn,
             icon: Icons.hourglass_top,
           )
         else if (st.solicitudEnCurso != null)
           Notice(
-            'Recibimos tu comprobante de ${st.solicitudEnCurso!.tipoVenta.label.toLowerCase()}. Lo estamos verificando.',
+            'Recibimos tu comprobante de '
+            '${st.solicitudEnCurso!.tipoVenta.label.toLowerCase()}. Lo '
+            'estamos verificando.',
             tone: Tone.warn,
             icon: Icons.hourglass_top,
           )
         else if (st.almuerzosRestantes > 0 && st.almuerzosRestantes <= 10)
           Notice(
-            'Te quedan ${st.almuerzosRestantes} almuerzos. Renueva antes del sábado a las 12:00 m. para seguir sin pausa.',
+            'Te quedan ${st.almuerzosRestantes} almuerzos. Renueva antes '
+            'del sábado a las 12:00 m. para seguir sin pausa.',
             icon: Icons.event_repeat,
           ),
 
@@ -175,7 +183,8 @@ class ClienteInicio extends StatelessWidget {
                   Icons.schedule,
                   st.entregaHoy == EstadoEntrega.entregada
                       ? 'Entregado a las 10:41 a. m.'
-                      : 'Llega entre 10:30 y 10:50 a. m. · horario ${AppState.horario}',
+                      : 'Llega entre 10:30 y 10:50 a. m. · horario '
+                            '${AppState.horario}',
                 ),
                 const SizedBox(height: 14),
                 JkButton(
@@ -195,7 +204,11 @@ class ClienteInicio extends StatelessWidget {
               children: [
                 for (final d in st.semana)
                   Expanded(
-                    child: _DiaSemana(d, st.estadoDia(d), mismoDia(d, st.hoy)),
+                    child: _DiaSemana(
+                      d,
+                      st.estadoDia(d),
+                      esHoy: mismoDia(d, st.hoy),
+                    ),
                   ),
               ],
             ),
@@ -303,7 +316,7 @@ class _Dato extends StatelessWidget {
 }
 
 class _DiaSemana extends StatelessWidget {
-  const _DiaSemana(this.d, this.estado, this.esHoy);
+  const _DiaSemana(this.d, this.estado, {required this.esHoy});
   final DateTime d;
   final String estado;
   final bool esHoy;

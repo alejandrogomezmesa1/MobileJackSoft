@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
 
 /// HU06.1_09 / 06.1_10 / 06.1_11: datos, direcciones (Fija o Híbrida) y alergias.
-/// Secciones que se leen como lista y se editan en el mismo lugar, una a la vez.
+/// Secciones que se leen como lista y se editan en el mismo lugar, una a la
+/// vez.
 class PerfilTab extends StatefulWidget {
   const PerfilTab({super.key});
 
@@ -109,7 +110,8 @@ class _PerfilTabState extends State<PerfilTab> {
                   ),
                   title: d.resumen,
                   subtitle:
-                      '${_dias(d.dias)} · ${d.municipio}${d.notas.isEmpty ? '' : '\n${d.notas}'}',
+                      '${_dias(d.dias)} · '
+                      '${d.municipio}${d.notas.isEmpty ? '' : '\n${d.notas}'}',
                   last: i == c.direcciones.length - 1,
                 ),
             ],
@@ -205,7 +207,7 @@ class _PerfilTabState extends State<PerfilTab> {
           ),
         ),
         const SizedBox(height: 4),
-        BotonCerrarSesion(
+        const BotonCerrarSesion(
           mensaje: 'Tendrás que entrar de nuevo para ver tu plan.',
         ),
       ],
@@ -275,7 +277,8 @@ class _SeccionCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        // Solo se edita una sección a la vez: un único botón naranja.
+                        // Solo se edita una sección a la vez: un único botón
+                        // naranja.
                         Expanded(
                           child: JkButton(
                             'Guardar cambios',
@@ -331,7 +334,8 @@ class _EditorDirecciones extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8, bottom: 12),
           child: Text(
             c.esHibrida
-                ? 'Recibe en dos direcciones según el día (por ejemplo, casa y oficina).'
+                ? 'Recibe en dos direcciones según el día (por ejemplo, '
+                      'casa y oficina).'
                 : 'Recibe siempre en la misma dirección.',
             style: JkText.body(13.5, c: JkColors.inkMuted),
           ),
@@ -396,8 +400,8 @@ class _EditorDirecciones extends StatelessWidget {
   }
 }
 
-void cambiarClaveSheet(BuildContext context) {
-  showJkSheet(
+Future<void> cambiarClaveSheet(BuildContext context) {
+  return showJkSheet<void>(
     context,
     builder: (ctx) => Column(
       mainAxisSize: MainAxisSize.min,
@@ -424,7 +428,7 @@ void cambiarClaveSheet(BuildContext context) {
 }
 
 class BotonCerrarSesion extends StatelessWidget {
-  const BotonCerrarSesion({super.key, required this.mensaje});
+  const BotonCerrarSesion({required this.mensaje, super.key});
   final String mensaje;
 
   @override

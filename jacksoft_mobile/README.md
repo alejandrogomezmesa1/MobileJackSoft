@@ -70,12 +70,28 @@ lib/
 | Mapa de OpenStreetMap con las paradas y el recorrido | Datos de clientes, rutas, pagos y menú (`AppState`) |
 | Cámara y galería para el comprobante y las fotos | La foto no se sube: falta el endpoint |
 | Llamar, abrir WhatsApp y navegar con Google Maps | El seguimiento del cliente mueve al domiciliario solo |
-| GPS del domiciliario con permiso, mientras está en ruta | La posición se guarda en la app, no se envía a la API |
+| GPS del domiciliario cada 15 s o 25 m mientras está en ruta, también con la pantalla apagada | La posición queda en la app: falta enviarla a la API |
+| Detecta Wi-Fi o datos; sin señal guarda las posiciones y las envía al volver | |
 | Textos del sistema en español y deslizar para actualizar | Google, Apple y el código por WhatsApp entran directo |
 
 Permisos ya configurados:
-- **Android:** ubicación, internet y las consultas para teléfono y enlaces.
-- **iOS:** cámara, fotos, ubicación y los esquemas `tel`, `https` y `whatsapp`.
+- **Android:**
+  - ubicación precisa y aproximada;
+  - servicio en primer plano de ubicación, con una notificación fija mientras comparte;
+  - internet, estado de la red y del Wi-Fi;
+  - notificaciones;
+  - consultas para teléfono y enlaces.
+- **iOS:**
+  - cámara y fotos;
+  - ubicación "al usar la app" y "siempre", con el modo de fondo `location`;
+  - los esquemas `tel`, `https` y `whatsapp`.
+
+Si Google Play Services no entrega la ubicación (por ejemplo, con la "Precisión de la ubicación de Google" apagada), la app usa el GPS del sistema.
+
+## Calidad
+
+- Reglas de [very_good_analysis](https://pub.dev/packages/very_good_analysis). `flutter analyze` no debe mostrar avisos.
+- En VS Code, instala las extensiones **Flutter** y **Dart**.
 
 ## Pendiente para producción
 
@@ -84,5 +100,4 @@ Permisos ya configurados:
 - Activar las notificaciones push (`dispositivos_push`).
 - Implementar de verdad el inicio de sesión con Google, Apple y el código por WhatsApp.
 - Cargar el WhatsApp de atención y la cuenta Bancolombia desde `configuraciones_sistema`. Hoy son datos de ejemplo.
-- Agregar la ubicación en segundo plano, si el domiciliario debe seguir enviándola con la pantalla apagada.
 - Agregar Gourmet (Estándar o Gourmet al cotizar y el menú de cada categoría) cuando cierre el grill G6.

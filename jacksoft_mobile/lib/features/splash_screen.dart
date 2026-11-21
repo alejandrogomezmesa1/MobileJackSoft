@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../core/shell.dart';
-import '../core/theme.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
 
 /// Fondo "night-table" plano (sin gradiente ni brillo decorativo).
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, required this.onDone});
+  const SplashScreen({required this.onDone, super.key});
   final VoidCallback onDone;
 
   @override

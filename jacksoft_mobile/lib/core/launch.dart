@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'widgets.dart';
 
 /// Celular colombiano a formato internacional: "300 445 1287" → "573004451287".
 String celularCo(String celular) {
@@ -13,7 +12,7 @@ Future<void> _abrir(BuildContext context, Uri uri, String falla) async {
   var ok = false;
   try {
     ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } catch (_) {
+  } on Exception {
     ok = false;
   }
   if (!ok && context.mounted) {

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import '../core/format.dart';
-import 'models.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/data/models.dart';
 
 /// Estado de la app con datos de prueba. Cada método corresponde a una
 /// llamada de la API; al conectar el backend se reemplaza el cuerpo sin
@@ -70,7 +70,7 @@ class AppState extends ChangeNotifier {
   int intentosFallidos = 0;
   DateTime? bloqueadoHasta;
 
-  static const _cuentas = {
+  static const Map<String, Rol> _cuentas = {
     'laura.gomez@correo.com': Rol.cliente,
     '3004451287': Rol.cliente,
     'julian.ospina@lacocadejacks.co': Rol.domiciliario,
@@ -81,7 +81,8 @@ class AppState extends ChangeNotifier {
   /// Devuelve null si entra; si no, el mensaje que se muestra.
   String? iniciarSesion(String identificador, String clave) {
     if (bloqueadoHasta != null && ahora.isBefore(bloqueadoHasta!)) {
-      return 'Tu cuenta está bloqueada por intentos fallidos. Intenta de nuevo a las ${hora(bloqueadoHasta!)} o recupera tu contraseña.';
+      return 'Tu cuenta está bloqueada por intentos fallidos. Intenta de '
+          'nuevo a las ${hora(bloqueadoHasta!)} o recupera tu contraseña.';
     }
     final id = identificador.trim().toLowerCase().replaceAll(' ', '');
     final r = _cuentas[id];
@@ -90,10 +91,12 @@ class AppState extends ChangeNotifier {
       if (intentosFallidos >= intentosMaximos) {
         bloqueadoHasta = ahora.add(const Duration(minutes: minutosBloqueo));
         notifyListeners();
-        return 'Bloqueamos tu cuenta por $minutosBloqueo minutos después de $intentosMaximos intentos fallidos.';
+        return 'Bloqueamos tu cuenta por $minutosBloqueo minutos después de '
+            '$intentosMaximos intentos fallidos.';
       }
       final quedan = intentosMaximos - intentosFallidos;
-      return 'El correo, el celular o la contraseña no coinciden. Te ${quedan == 1 ? 'queda 1 intento' : 'quedan $quedan intentos'}.';
+      return 'El correo, el celular o la contraseña no coinciden. Te '
+          '${quedan == 1 ? 'queda 1 intento' : 'quedan $quedan intentos'}.';
     }
     _entrar(r);
     return null;
@@ -154,7 +157,8 @@ class AppState extends ChangeNotifier {
   EstadoEntrega entregaHoy = EstadoEntrega.enRuta;
   final domiciliarioHoy = 'Julián Ospina';
 
-  /// Contador en vivo: almuerzos que faltan por recibir (sin festivos ni pausas).
+  /// Contador en vivo: almuerzos que faltan por recibir (sin festivos ni
+  /// pausas).
   int get almuerzosRestantes {
     if (!tienePlan || suscripcion.estado != EstadoSuscripcion.activa) return 0;
     var n = 0;
@@ -263,7 +267,11 @@ class AppState extends ChangeNotifier {
     return DateTime(inicio.year, inicio.month, inicio.day + semanas * 7 - 3);
   }
 
-  void reportarIncidencia(TipoIncidencia tipo, String descripcion, bool foto) {
+  void reportarIncidencia(
+    TipoIncidencia tipo,
+    String descripcion, {
+    required bool foto,
+  }) {
     incidencias.insert(
       0,
       Incidencia(
@@ -279,8 +287,10 @@ class AppState extends ChangeNotifier {
 
   void guardarPerfil() => notifyListeners();
 
-  // ---------------------------------------------------------------- domiciliario
-  final domiciliario = (
+  // ----------------------------------------------------------------
+  // domiciliario
+  final ({String celular, String correo, String documento, String nombre})
+  domiciliario = (
     nombre: 'Julián Ospina',
     correo: 'julian.ospina@lacocadejacks.co',
     celular: '312 990 4471',
@@ -295,6 +305,9 @@ class AppState extends ChangeNotifier {
 
   List<Parada> get pendientes => paradas.where((p) => p.pendiente).toList();
   List<Parada> get completadas => paradas.where((p) => !p.pendiente).toList();
+  int get entregadasHoy =>
+      completadas.where((p) => p.estado == EstadoEntrega.entregada).length;
+  int get precisionGps => ultimaUbicacion?.precision.round() ?? 0;
   Parada? get siguiente => pendientes.isEmpty ? null : pendientes.first;
   int get cocasPorRecoger => paradas
       .where((p) => p.juegoRecoger != null && !p.cocasRegistradas)
@@ -308,40 +321,66 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void alternarUbicacion(bool v) {
-    compartiendoUbicacion = v;
+  void alternarUbicacion({required bool activa}) {
+    compartiendoUbicacion = activa;
     notifyListeners();
   }
 
-  /// Última posición enviada (POST a geolocalizacion_domiciliarios).
-  ({double lat, double lng, double precision, DateTime hora})? ultimaUbicacion;
+  /// Última posición leída del GPS.
+  Posicion? ultimaUbicacion;
 
   /// Motivo por el que no se pudo leer el GPS (permiso negado, GPS apagado).
   String? problemaUbicacion;
 
+  /// Red del celular: 'Wi-Fi', 'datos móviles' o null si no hay conexión.
+  String? red = 'Wi-Fi';
+  bool get enLinea => red != null;
+
+  /// Posiciones leídas sin conexión: se envían en orden al volver la red,
+  /// para que el administrador vea el recorrido completo.
+  final colaUbicaciones = <Posicion>[];
+  int ubicacionesEnviadas = 0;
+
   void registrarUbicacion(double lat, double lng, double precision) {
-    ultimaUbicacion = (
+    final p = (
       lat: lat,
       lng: lng,
       precision: precision,
       hora: DateTime.now(),
     );
+    ultimaUbicacion = p;
     problemaUbicacion = null;
+    colaUbicaciones.add(p);
+    if (enLinea) _enviarCola();
     notifyListeners();
   }
 
-  void fallaUbicacion(String motivo) {
+  void cambioDeRed(String? nueva) {
+    red = nueva;
+    if (enLinea) _enviarCola();
+    notifyListeners();
+  }
+
+  /// Con la API: POST /domiciliario/ubicaciones con el lote
+  /// (filas de geolocalizacion_domiciliarios).
+  void _enviarCola() {
+    ubicacionesEnviadas += colaUbicaciones.length;
+    colaUbicaciones.clear();
+  }
+
+  void fallaUbicacion(String? motivo) {
     problemaUbicacion = motivo;
     notifyListeners();
   }
 
   /// Confirmar la entrega o registrar por qué no se pudo.
   void cerrarParada(Parada p, String resultado) {
-    p.resultado = resultado;
-    p.horaEntrega = ahora;
-    p.estado = resultado == 'Entregado'
-        ? EstadoEntrega.entregada
-        : EstadoEntrega.incidencia;
+    p
+      ..resultado = resultado
+      ..horaEntrega = ahora
+      ..estado = resultado == 'Entregado'
+          ? EstadoEntrega.entregada
+          : EstadoEntrega.incidencia;
     if (resultado != 'Entregado') {
       final tipo = switch (resultado) {
         'Cliente ausente' => TipoIncidencia.ausenciaCliente,
@@ -379,9 +418,9 @@ class AppState extends ChangeNotifier {
   void reportarNovedad(
     TipoIncidencia tipo,
     String descripcion,
-    String? clienteNombre,
-    bool foto,
-  ) {
+    String? clienteNombre, {
+    required bool foto,
+  }) {
     novedades.insert(
       0,
       Incidencia(
@@ -434,7 +473,8 @@ class AppState extends ChangeNotifier {
           ),
         ];
 
-  // ---------------------------------------------------------------- datos de prueba
+  // ---------------------------------------------------------------- datos de
+  // prueba
   void _sembrar() {
     cliente = Cliente(
       nombre: 'Laura Gómez',
@@ -564,7 +604,8 @@ class AppState extends ChangeNotifier {
         estado: EstadoIncidencia.resuelta,
         conFoto: true,
         respuesta:
-            'Laura, ya cambiamos esa pieza de tu juego de cocas. Gracias por avisarnos.',
+            'Laura, ya cambiamos esa pieza de tu juego de cocas. Gracias '
+            'por avisarnos.',
         fechaResolucion: DateTime(2026, 11, 18, 15, 15),
       ),
       Incidencia(
@@ -744,17 +785,25 @@ class AppState extends ChangeNotifier {
         'Dirección incorrecta',
       ),
     ];
-    historial.insertAll(
-      0,
-      previos.map((e) => EntregaHistorial(e.$1, e.$2, e.$3, e.$4)),
-    );
-    historial.sort((a, b) => b.fecha.compareTo(a.fecha));
+    historial
+      ..insertAll(
+        0,
+        previos.map((e) => EntregaHistorial(e.$1, e.$2, e.$3, e.$4)),
+      )
+      ..sort((a, b) => b.fecha.compareTo(a.fecha));
   }
 }
 
+typedef Posicion = ({
+  double lat,
+  double lng,
+  double precision,
+  DateTime hora,
+});
+
 /// Acceso al estado desde cualquier pantalla: `AppScope.of(context)`.
 class AppScope extends InheritedNotifier<AppState> {
-  const AppScope({super.key, required AppState state, required super.child})
+  const AppScope({required AppState state, required super.child, super.key})
     : super(notifier: state);
 
   static AppState of(BuildContext context) =>

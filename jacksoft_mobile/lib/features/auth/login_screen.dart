@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import 'recuperar_screen.dart';
-import 'registro_screen.dart';
-import 'whatsapp_screen.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/auth/recuperar_screen.dart';
+import 'package:jacksoft_mobile/features/auth/registro_screen.dart';
+import 'package:jacksoft_mobile/features/auth/whatsapp_screen.dart';
 
 /// Marco común de las pantallas de acceso.
 class AuthFrame extends StatelessWidget {
   const AuthFrame({
-    super.key,
     required this.title,
     required this.lead,
     required this.children,
+    super.key,
   });
   final String title;
   final String lead;
@@ -113,7 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) => AuthFrame(
     title: 'Inicia sesión',
     lead:
-        'Entra con tu correo o tu celular. Te llevamos a tu cuenta de cliente o a tu ruta de domiciliario.',
+        'Entra con tu correo o tu celular. Te llevamos a tu cuenta de '
+        'cliente o a tu ruta de domiciliario.',
     children: [
       Segmented<Rol>(
         options: Rol.values,

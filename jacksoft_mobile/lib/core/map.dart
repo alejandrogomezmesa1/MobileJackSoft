@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
 import 'package:latlong2/latlong.dart';
-
-import 'theme.dart';
 
 /// Un punto de la ruta. Las paradas de prueba guardan una posición
 /// normalizada (0–1) dentro de Laureles–Estadio; [latLng] la convierte.
-/// Con la API, cada punto llega con la latitud y longitud de `direcciones_cliente`.
+/// Con la API, cada punto llega con la latitud y longitud de
+/// `direcciones_cliente`.
 class MapPoint {
   const MapPoint(
     this.x,
@@ -29,11 +29,12 @@ LatLng toLatLng(Offset p) =>
     LatLng(6.258 - p.dy * 0.026, -75.606 + p.dx * 0.028);
 
 /// Mapa real (OpenStreetMap) con el recorrido, las paradas y el domiciliario.
-/// Los mosaicos van en sepia apagado para que el naranja siga marcando la acción.
+/// Los mosaicos van en sepia apagado para que el naranja siga marcando la
+/// acción.
 class RouteMap extends StatelessWidget {
   const RouteMap({
-    super.key,
     required this.points,
+    super.key,
     this.courier,
     this.height = 260,
     this.caption,

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../core/format.dart';
-import '../../core/location.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import '../cliente/incidencias_screens.dart';
-import '../cliente/perfil_screen.dart';
-import 'entrega_screens.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/location.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/cliente/incidencias_screens.dart';
+import 'package:jacksoft_mobile/features/cliente/perfil_screen.dart';
+import 'package:jacksoft_mobile/features/domiciliario/entrega_screens.dart';
 
-const tabRutas = 1, tabEntregas = 2;
+const tabRutas = 1;
+const tabEntregas = 2;
 
 /// Pestañas del domiciliario: las cinco del prototipo HTML.
 class DomiciliarioShell extends StatelessWidget {
@@ -126,15 +127,18 @@ class DomInicio extends StatelessWidget {
               const SizedBox(height: 6),
               JkSwitchRow(
                 title: 'Compartir mi ubicación',
-                subtitle: !st.compartiendoUbicacion
-                    ? 'Actívala mientras estés en ruta'
-                    : st.problemaUbicacion ??
-                          (st.ultimaUbicacion == null
-                              ? 'El administrador y tus clientes te ven en el mapa'
-                              : 'Enviada a las ${hora(st.ultimaUbicacion!.hora)} · precisión ${st.ultimaUbicacion!.precision.round()} m'),
+                subtitle: estadoUbicacion(st),
                 value: st.compartiendoUbicacion,
-                onChanged: st.alternarUbicacion,
+                onChanged: (v) => st.alternarUbicacion(activa: v),
               ),
+              if (st.compartiendoUbicacion && !st.enLinea)
+                Notice(
+                  'Sin conexión: guardamos '
+                  '${st.colaUbicaciones.length} posiciones y las enviamos '
+                  'cuando vuelva la señal.',
+                  icon: Icons.wifi_off,
+                  tone: Tone.warn,
+                ),
               const SizedBox(height: 8),
               if (!st.rutaIniciada)
                 JkButton(
@@ -166,8 +170,7 @@ class DomInicio extends StatelessWidget {
           ),
           StatTile(
             label: 'Entregadas',
-            value:
-                '${st.completadas.where((p) => p.estado == EstadoEntrega.entregada).length}',
+            value: '${st.entregadasHoy}',
             icon: Icons.check_circle_outline,
           ),
           StatTile(
@@ -217,6 +220,16 @@ class DomInicio extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Estado del envío de la ubicación, en una línea.
+String estadoUbicacion(AppState st) {
+  if (!st.compartiendoUbicacion) return 'Actívala mientras estés en ruta';
+  if (st.problemaUbicacion != null) return st.problemaUbicacion!;
+  final red = st.red == null ? 'sin conexión' : 'por ${st.red}';
+  final u = st.ultimaUbicacion;
+  if (u == null) return 'El administrador y tus clientes te ven · $red';
+  return 'Última a las ${hora(u.hora)} · ${st.precisionGps} m · $red';
 }
 
 /// Fila de una parada de la ruta.
@@ -306,7 +319,8 @@ class RutaTab extends StatelessWidget {
                         style: JkText.body(15, w: FontWeight.w700),
                       ),
                       Text(
-                        '${st.paradas.length} clientes · ${st.pendientes.length} por entregar',
+                        '${st.paradas.length} clientes · '
+                        '${st.pendientes.length} por entregar',
                         style: JkText.body(13, c: JkColors.inkMuted),
                       ),
                     ],
@@ -500,7 +514,7 @@ class DomPerfil extends StatelessWidget {
             children: [
               InfoRow('Documento', d.documento),
               InfoRow('Celular', d.celular),
-              InfoRow('Rol', 'Domiciliario'),
+              const InfoRow('Rol', 'Domiciliario'),
               InfoRow('Ruta de hoy', st.rutaNombre, last: true),
             ],
           ),
@@ -511,9 +525,9 @@ class DomPerfil extends StatelessWidget {
             children: [
               JkSwitchRow(
                 title: 'Compartir mi ubicación',
-                subtitle: 'Solo durante la ruta',
+                subtitle: estadoUbicacion(st),
                 value: st.compartiendoUbicacion,
-                onChanged: st.alternarUbicacion,
+                onChanged: (v) => st.alternarUbicacion(activa: v),
               ),
               JkListItem(
                 leading: const IconTile(Icons.lock_outline, size: 38),
@@ -524,9 +538,9 @@ class DomPerfil extends StatelessWidget {
             ],
           ),
         ),
-        Notice(
-          'Tus datos los actualiza el administrador. Si algo está mal, avísale.',
-          icon: Icons.info_outline,
+        const Notice(
+          'Tus datos los actualiza el administrador. '
+          'Si algo está mal, avísale.',
         ),
         const BotonCerrarSesion(mensaje: 'Dejarás de compartir tu ubicación.'),
       ],

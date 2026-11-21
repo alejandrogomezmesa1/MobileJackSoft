@@ -1,6 +1,6 @@
 /// Modelos del dominio. Los enums siguen al modelo relacional
 /// DocumentacionJackSoft/04_Modelado_DB/Modelo_Relacional/v15_2026-11-20/bd.uml
-/// (DBML v4.8). El campo [db] es el valor que viaja a la API.
+/// (DBML v4.8). El campo `db` es el valor que viaja a la API.
 library;
 
 enum Rol { cliente, domiciliario }
@@ -94,14 +94,14 @@ enum TipoIncidencia {
   final String db;
   final String label;
 
-  static const delCliente = [
+  static const List<TipoIncidencia> delCliente = [
     calidadAlmuerzo,
     cocaDefectuosa,
     retraso,
     alergiaNoAtendida,
     otro,
   ];
-  static const deRuta = [
+  static const List<TipoIncidencia> deRuta = [
     ausenciaCliente,
     direccionIncorrecta,
     cocaDefectuosa,
@@ -111,7 +111,8 @@ enum TipoIncidencia {
   ];
 }
 
-/// `componente_alimento`: lista cerrada de 7 alergias (acuerdo G1–G3, sin texto libre).
+/// `componente_alimento`: lista cerrada de 7 alergias (acuerdo G1–G3, sin texto
+/// libre).
 enum Alergeno {
   carne('carne', 'Carne'),
   cerdo('cerdo', 'Cerdo'),
@@ -188,7 +189,8 @@ class Cliente {
   bool tieneKitCocas;
   bool avisosWhatsapp;
 
-  /// La modalidad se calcula con las direcciones (bd.uml): una = Fija, dos = Híbrida.
+  /// La modalidad se calcula con las direcciones (bd.uml): una = Fija, dos =
+  /// Híbrida.
   bool get esHibrida => direcciones.length > 1;
   String get primerNombre => nombre.split(' ').first;
 
@@ -309,9 +311,9 @@ class Parada {
     required this.notas,
     required this.x,
     required this.y,
+    required this.juegoEntregar,
     this.alergias = const {},
     this.preferencia = PreferenciaProteina.normal,
-    required this.juegoEntregar,
     this.juegoRecoger,
     this.estado = EstadoEntrega.programada,
     this.horaEntrega,

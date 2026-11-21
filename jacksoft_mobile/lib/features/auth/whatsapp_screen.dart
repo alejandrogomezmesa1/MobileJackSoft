@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import 'login_screen.dart';
-import 'recuperar_screen.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/features/auth/login_screen.dart';
+import 'package:jacksoft_mobile/features/auth/recuperar_screen.dart';
 
 /// HU02.2_12: entrar con un código que llega por WhatsApp (solo clientes).
 class WhatsappScreen extends StatefulWidget {
@@ -51,7 +51,7 @@ class _WhatsappScreenState extends State<WhatsappScreen> {
                 controller: _cel,
                 keyboard: TextInputType.phone,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')),
+                  FilteringTextInputFormatter.allow(RegExp('[0-9 ]')),
                 ],
                 validator: (v) => (v ?? '').replaceAll(' ', '').length != 10
                     ? 'Escribe los 10 dígitos de tu celular'

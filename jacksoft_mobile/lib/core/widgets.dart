@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'theme.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
 
 export 'launch.dart';
 export 'map.dart';
@@ -12,8 +12,8 @@ export 'media.dart';
 /// Tarjeta blanca con línea fina (sin sombra: Float Only Rule).
 class JkCard extends StatelessWidget {
   const JkCard({
-    super.key,
     required this.child,
+    super.key,
     this.padding = const EdgeInsets.all(16),
     this.color = JkColors.white,
     this.borderColor = JkColors.line,
@@ -122,7 +122,10 @@ enum Tone { ok, warn, bad, neutral, info }
 
 /// Estado con su tono y siempre con texto.
 class StatusBadge extends StatelessWidget {
-  const StatusBadge(this.text, {super.key, required this.tone});
+  const StatusBadge(this.text, {required this.tone, super.key});
+
+  factory StatusBadge.auto(String text, {Key? key}) =>
+      StatusBadge(text, key: key, tone: toneFor(text));
   final String text;
   final Tone tone;
 
@@ -155,9 +158,6 @@ class StatusBadge extends StatelessWidget {
     'En ruta' || 'Abierta' || 'Hoy' => Tone.info,
     _ => Tone.neutral,
   };
-
-  factory StatusBadge.auto(String text, {Key? key}) =>
-      StatusBadge(text, key: key, tone: toneFor(text));
 
   @override
   Widget build(BuildContext context) {
@@ -253,9 +253,9 @@ class Avatar extends StatelessWidget {
 
 class JkListItem extends StatelessWidget {
   const JkListItem({
+    required this.title,
     super.key,
     this.leading,
-    required this.title,
     this.subtitle,
     this.trailing,
     this.onTap,
@@ -313,9 +313,9 @@ class JkListItem extends StatelessWidget {
 
 class StatTile extends StatelessWidget {
   const StatTile({
-    super.key,
     required this.label,
     required this.value,
+    super.key,
     this.icon,
     this.valueWidget,
   });
@@ -543,9 +543,9 @@ class JkButton extends StatelessWidget {
 /// Botón cuadrado de ícono para la barra superior.
 class SquareIconButton extends StatelessWidget {
   const SquareIconButton({
-    super.key,
     required this.icon,
     required this.onTap,
+    super.key,
     this.dot = false,
     this.tooltip,
   });
@@ -595,8 +595,8 @@ class SquareIconButton extends StatelessWidget {
 
 class JkField extends StatefulWidget {
   const JkField({
-    super.key,
     required this.label,
+    super.key,
     this.controller,
     this.hint,
     this.keyboard,
@@ -683,12 +683,12 @@ class _JkFieldState extends State<JkField> {
 
 class JkDropdown<T> extends StatelessWidget {
   const JkDropdown({
-    super.key,
     required this.label,
     required this.value,
     required this.items,
     required this.itemLabel,
     required this.onChanged,
+    super.key,
     this.hint,
   });
   final String label;
@@ -733,11 +733,11 @@ class JkDropdown<T> extends StatelessWidget {
 /// Interruptor cuadrado del panel, en una fila de 44 px o más.
 class JkSwitchRow extends StatelessWidget {
   const JkSwitchRow({
-    super.key,
     required this.title,
-    this.subtitle,
     required this.value,
     required this.onChanged,
+    super.key,
+    this.subtitle,
   });
   final String title;
   final String? subtitle;
@@ -801,11 +801,11 @@ class JkSwitchRow extends StatelessWidget {
 /// Selector de opciones en bloque (equivale al `.radio2` del prototipo).
 class Segmented<T> extends StatelessWidget {
   const Segmented({
-    super.key,
     required this.options,
     required this.selected,
     required this.label,
     required this.onChanged,
+    super.key,
     this.icons,
   });
   final List<T> options;
@@ -875,12 +875,12 @@ class Segmented<T> extends StatelessWidget {
 /// Opción grande seleccionable (planes, proteína).
 class OptionCard extends StatelessWidget {
   const OptionCard({
-    super.key,
     required this.title,
-    this.subtitle,
-    this.trailing,
     required this.selected,
     required this.onTap,
+    super.key,
+    this.subtitle,
+    this.trailing,
   });
   final String title;
   final String? subtitle;
@@ -942,11 +942,11 @@ class OptionCard extends StatelessWidget {
 /// Chips de selección múltiple (las 7 alergias de la lista cerrada).
 class ChipSelector<T> extends StatelessWidget {
   const ChipSelector({
-    super.key,
     required this.options,
     required this.selected,
     required this.label,
     required this.onToggle,
+    super.key,
   });
   final List<T> options;
   final Set<T> selected;

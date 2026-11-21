@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import 'login_screen.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/auth/login_screen.dart';
 
 /// HU06.1_08: registro del cliente desde la app (canal_registro = app_movil).
 class RegistroScreen extends StatefulWidget {
@@ -83,7 +83,8 @@ class _RegistroScreenState extends State<RegistroScreen> {
   Widget build(BuildContext context) => AuthFrame(
     title: 'Crea tu cuenta',
     lead:
-        'Con tu cuenta eliges el plan, subes el comprobante y sigues tus almuerzos.',
+        'Con tu cuenta eliges el plan, subes el comprobante y sigues tus '
+        'almuerzos.',
     children: [
       Form(
         key: _form,
@@ -174,13 +175,16 @@ class _RegistroScreenState extends State<RegistroScreen> {
               maxLines: 2,
               hint: 'Torre, apartamento o portería',
               helper:
-                  'Obligatorio si vives o trabajas en un edificio. Si recibes en dos direcciones, agrega la segunda desde tu perfil (modalidad híbrida).',
+                  'Obligatorio si vives o trabajas en un edificio. Si '
+                  'recibes en dos direcciones, agrega la segunda desde tu '
+                  'perfil (modalidad híbrida).',
             ),
             const SectionTitle('Alergias'),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(
-                'Marca lo que no puedes comer. La cocina te cambia el plato ese día.',
+                'Marca lo que no puedes comer. La cocina te cambia el plato '
+                'ese día.',
                 style: JkText.body(14, c: JkColors.inkSoft),
               ),
             ),

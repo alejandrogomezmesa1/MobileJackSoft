@@ -1,4 +1,5 @@
-/// Formatos en español de Colombia (pesos sin decimales, fechas y horas "a. m.").
+/// Formatos en español de Colombia (pesos sin decimales, fechas y horas "a.
+/// m.").
 library;
 
 String cop(num valor) {

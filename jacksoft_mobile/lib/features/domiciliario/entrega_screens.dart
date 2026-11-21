@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import '../cliente/incidencias_screens.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/cliente/incidencias_screens.dart';
 
 /// Detalle de la entrega: dirección, indicaciones, alergias y cocas.
 class DetalleEntrega extends StatelessWidget {
@@ -63,7 +63,9 @@ class DetalleEntrega extends StatelessWidget {
         ),
         if (p.alergias.isNotEmpty)
           Notice(
-            'Alergias: ${p.alergias.map((a) => a.label.toLowerCase()).join(', ')}. Verifica que la coca diga su nombre.',
+            'Alergias: '
+            '${p.alergias.map((a) => a.label.toLowerCase()).join(', ')}. '
+            'Verifica que la coca diga su nombre.',
             tone: Tone.warn,
             icon: Icons.health_and_safety_outlined,
           ),
@@ -116,7 +118,8 @@ class DetalleEntrega extends StatelessWidget {
         if (!p.pendiente) ...[
           const SizedBox(height: 14),
           Notice(
-            '${p.resultado} a las ${hora(p.horaEntrega!)}. Ya se le avisó al cliente y al administrador.',
+            '${p.resultado} a las ${hora(p.horaEntrega!)}. Ya se le avisó '
+            'al cliente y al administrador.',
             tone: p.estado == EstadoEntrega.entregada ? Tone.ok : Tone.bad,
             icon: p.estado == EstadoEntrega.entregada
                 ? Icons.check_circle_outline
@@ -133,7 +136,7 @@ class ConfirmarEntrega extends StatelessWidget {
   const ConfirmarEntrega(this.p, {super.key});
   final Parada p;
 
-  static const _opciones = [
+  static const List<(String, String, IconData, Tone)> _opciones = [
     (
       'Entregado',
       'El cliente o la portería recibió',
@@ -174,7 +177,8 @@ class ConfirmarEntrega extends StatelessWidget {
                 context,
                 title: o.$1,
                 message:
-                    'Se registra a las ${hora(st.ahora)} y se le avisa a ${p.cliente.split(' ').first} y al administrador.',
+                    'Se registra a las ${hora(st.ahora)} y se le avisa a '
+                    '${p.cliente.split(' ').first} y al administrador.',
                 confirmLabel: 'Confirmar',
               );
               if (!ok || !context.mounted) return;
@@ -228,7 +232,7 @@ class CocasScreen extends StatefulWidget {
 class _CocasScreenState extends State<CocasScreen> {
   bool _entregado = true;
   late bool _recogido = widget.p.juegoRecoger != null;
-  final _estado = {
+  final Map<String, EstadoFisicoRecipiente> _estado = {
     for (final pz in piezasCoca) pz: EstadoFisicoRecipiente.bueno,
   };
 
@@ -244,8 +248,7 @@ class _CocasScreenState extends State<CocasScreen> {
       bottom: JkButton(
         'Guardar registro',
         onPressed: () {
-          final st = AppScope.read(context);
-          st.registrarCocas(p);
+          final st = AppScope.read(context)..registrarCocas(p);
           if (hayDano) {
             final malas = _estado.entries.where(
               (e) => e.value != EstadoFisicoRecipiente.bueno,
@@ -258,14 +261,14 @@ class _CocasScreenState extends State<CocasScreen> {
                   .map((e) => '${e.key}: ${e.value.label.toLowerCase()}')
                   .join(', '),
               p.cliente,
-              false,
+              foto: false,
             );
           } else if (p.juegoRecoger != null && !_recogido) {
             st.reportarNovedad(
               TipoIncidencia.cocaNoDevuelta,
               'No entregó el juego ${p.juegoRecoger} vacío.',
               p.cliente,
-              false,
+              foto: false,
             );
           }
           showToast(context, 'Cocas registradas');
@@ -318,7 +321,8 @@ class _CocasScreenState extends State<CocasScreen> {
             ),
           if (hayDano)
             const Notice(
-              'Al guardar se crea una novedad de coca defectuosa para el administrador.',
+              'Al guardar se crea una novedad de coca defectuosa para el '
+              'administrador.',
               tone: Tone.warn,
               icon: Icons.report_gmailerrorred_outlined,
             ),
@@ -409,7 +413,7 @@ class _NovedadScreenState extends State<NovedadScreen> {
                       _tipo,
                       _desc.text.trim(),
                       _cliente,
-                      _foto != null,
+                      foto: _foto != null,
                     );
                     showToast(context, 'Novedad enviada al administrador');
                     Navigator.pop(context);
@@ -429,7 +433,8 @@ class _NovedadScreenState extends State<NovedadScreen> {
                   JkListItem(
                     title: n.tipo.label,
                     subtitle:
-                        '#${n.id} · ${n.cliente ?? 'Ruta'} · ${fechaCorta(n.fecha)}',
+                        '#${n.id} · ${n.cliente ?? 'Ruta'} · '
+                        '${fechaCorta(n.fecha)}',
                     trailing: StatusBadge.auto(n.estado.label),
                     last: i == mias.length - 1,
                     onTap: () => pushPage(context, IncidenciaDetalle(n)),

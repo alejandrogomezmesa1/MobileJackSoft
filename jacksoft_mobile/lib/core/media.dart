@@ -1,17 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'theme.dart';
-import 'widgets.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
 
 /// Foto o comprobante desde la cámara o la galería, con vista previa.
 /// Controlado: el dueño guarda el [file] y lo recibe en [onChanged].
 class PhotoField extends StatefulWidget {
   const PhotoField({
-    super.key,
     required this.file,
     required this.onChanged,
+    super.key,
     this.label = 'Toca para tomar o subir una foto',
     this.error,
   });
@@ -35,7 +37,7 @@ class _PhotoFieldState extends State<PhotoField> {
       _bytes = null;
       _path = null;
     } else if (widget.file!.path != _path) {
-      _cargar(widget.file!);
+      unawaited(_cargar(widget.file!));
     }
   }
 
@@ -97,7 +99,9 @@ class _PhotoFieldState extends State<PhotoField> {
       if (mounted) {
         showToast(
           context,
-          'No pudimos abrir la ${origen == ImageSource.camera ? 'cámara' : 'galería'}. Revisa los permisos de la app.',
+          'No pudimos abrir la '
+          '${origen == ImageSource.camera ? 'cámara' : 'galería'}. Revisa '
+          'los permisos de la app.',
           icon: Icons.error_outline,
         );
       }
@@ -157,7 +161,8 @@ class _PhotoFieldState extends State<PhotoField> {
                     Expanded(
                       child: Text(
                         hay
-                            ? '${widget.file!.name}\nToca para cambiarla o quitarla'
+                            ? '${widget.file!.name}\nToca para cambiarla o '
+                                  'quitarla'
                             : widget.label,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:jacksoft_mobile/core/format.dart';
+import 'package:jacksoft_mobile/core/shell.dart';
+import 'package:jacksoft_mobile/core/theme.dart';
+import 'package:jacksoft_mobile/core/widgets.dart';
+import 'package:jacksoft_mobile/data/app_state.dart';
+import 'package:jacksoft_mobile/data/models.dart';
+import 'package:jacksoft_mobile/features/cliente/cliente_shell.dart';
+import 'package:jacksoft_mobile/features/cliente/suspender_screen.dart';
 import 'package:latlong2/latlong.dart' show Distance, LengthUnit;
-
-import '../../core/format.dart';
-import '../../core/shell.dart';
-import '../../core/theme.dart';
-import '../../core/widgets.dart';
-import '../../data/app_state.dart';
-import '../../data/models.dart';
-import 'cliente_shell.dart';
-import 'suspender_screen.dart';
 
 /// Seguimiento de la entrega: en preparación → en ruta → entregado.
 class EntregaTab extends StatelessWidget {
@@ -22,10 +21,12 @@ class EntregaTab extends StatelessWidget {
     if (!st.hayEntregaHoy) {
       final motivo =
           !st.tienePlan || st.suscripcion.estado != EstadoSuscripcion.activa
-          ? 'Cuando tu plan esté activo, aquí ves tu almuerzo del día y al domiciliario en el mapa.'
+          ? 'Cuando tu plan esté activo, aquí ves tu almuerzo del día y al '
+                'domiciliario en el mapa.'
           : st.pausas.contains(st.hoy)
           ? 'Pausaste el almuerzo de hoy.'
-          : 'Hoy no hay entrega. Llegamos de lunes a viernes, ${AppState.horario}';
+          : 'Hoy no hay entrega. Llegamos de lunes a viernes, '
+                '${AppState.horario}';
       return TabBody(
         children: [
           JkCard(
@@ -133,7 +134,7 @@ class EntregaTab extends StatelessWidget {
                 'Dirección de hoy',
                 st.cliente.direccionDelDia(st.hoy).resumen,
               ),
-              InfoRow(
+              const InfoRow(
                 'Juego de cocas',
                 'Entregan el juego 2 y recogen el 1',
                 last: true,
@@ -143,7 +144,8 @@ class EntregaTab extends StatelessWidget {
         ),
         if (!entregado) ...[
           const Notice(
-            'Te escribimos por WhatsApp 5 minutos antes de llegar. El domiciliario te espera hasta 10 minutos.',
+            'Te escribimos por WhatsApp 5 minutos antes de llegar. El '
+            'domiciliario te espera hasta 10 minutos.',
             icon: Icons.notifications_active_outlined,
           ),
           JkButton(
@@ -229,7 +231,8 @@ class _SeguimientoScreenState extends State<SeguimientoScreen> {
       children: [
         RouteMap(
           height: 340,
-          // Al cliente solo se le muestra su parada y el domiciliario (no la zona interna).
+          // Al cliente solo se le muestra su parada y el domiciliario (no la
+          // zona interna).
           points: [
             MapPoint(destino.dx, destino.dy, label: '•', highlight: true),
           ],
@@ -300,7 +303,8 @@ class _SeguimientoScreenState extends State<SeguimientoScreen> {
           )
         else
           const Notice(
-            'Te avisamos por WhatsApp 5 minutos antes de llegar y cuando entregue.',
+            'Te avisamos por WhatsApp 5 minutos antes de llegar y cuando '
+            'entregue.',
             icon: Icons.notifications_none,
           ),
         JkButton.ghost(

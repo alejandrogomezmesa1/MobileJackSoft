@@ -41,6 +41,18 @@ void main() {
       expect(st.festivosDel(st.suscripcion), [DateTime(2026, 11, 16)]);
     });
 
+    test('sin señal las coordenadas esperan en cola y salen al volver', () {
+      final st = AppState()
+        ..cambioDeRed(null)
+        ..registrarUbicacion(6.245, -75.59, 8)
+        ..registrarUbicacion(6.246, -75.59, 9);
+      expect(st.colaUbicaciones.length, 2);
+      expect(st.ubicacionesEnviadas, 0);
+      st.cambioDeRed('Wi-Fi');
+      expect(st.colaUbicaciones, isEmpty);
+      expect(st.ubicacionesEnviadas, 2);
+    });
+
     test('pausa hasta las 5:00 p. m. del día anterior', () {
       final st = AppState(); // ahora: lun 23 nov 2026, 10:20 a. m.
       expect(st.puedePausar(DateTime(2026, 11, 24)), isTrue);
@@ -60,11 +72,11 @@ void main() {
     test(
       'renovación con kit: no cobra cocas y suma el recargo de proteína',
       () {
-        final st = AppState();
-        st.solicitarPlan(
-          plan: TipoPlan.mensual,
-          preferencia: PreferenciaProteina.soloCerdo,
-        );
+        final st = AppState()
+          ..solicitarPlan(
+            plan: TipoPlan.mensual,
+            preferencia: PreferenciaProteina.soloCerdo,
+          );
         final s = st.solicitudEnCurso!;
         expect(s.tipoVenta, TipoVenta.renovacion);
         expect(s.cobroCocas, 0);
